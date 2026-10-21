@@ -34,6 +34,7 @@ export default function MapRadarView({
   const [hoveredProId, setHoveredProId] = useState(null);
   const [selectedProId, setSelectedProId] = useState(null);
   const [mapZoom, setMapZoom] = useState(1);
+  const [mobileViewMode, setMobileViewMode] = useState('list'); // 'list' or 'map'
 
   // Filtered and sorted professionals
   const filteredPros = useMemo(() => {
@@ -94,21 +95,21 @@ export default function MapRadarView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       
       {/* Search Header Banner */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs">
         <div className="max-w-3xl">
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug">
             Verified Trade Specialists & On-Demand Dispatch in Lagos
           </h1>
-          <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 mt-1 sm:mt-1.5 leading-relaxed">
             Connect directly with licensed electricians, solar engineers, and HVAC specialists nearby. Background-checked, verified credentials, and protected with secure escrow payments.
           </p>
         </div>
 
         {/* Search & Location Bar */}
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+        <div className="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3 items-center">
           
           {/* Service Search */}
           <div className="relative sm:col-span-5">
@@ -117,7 +118,7 @@ export default function MapRadarView({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="What service do you need? (e.g. Solar inverter, ATS, AC gas...)"
+              placeholder="Search trade (e.g. Solar, ATS, AC...)"
               className="w-full rounded-xl border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-8 text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:outline-none transition-colors"
             />
             {searchQuery && (
@@ -155,15 +156,15 @@ export default function MapRadarView({
 
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-t border-slate-100 pt-3">
+        {/* Category Filter Pills (Edge-to-edge touch scroll on mobile) */}
+        <div className="mt-3 sm:mt-4 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-t border-slate-100 pt-3 -mx-4 px-4 sm:mx-0 sm:px-0">
           {CATEGORIES.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 selectedCategory === cat.id
-                  ? 'border border-emerald-600 bg-emerald-50 text-emerald-800 shadow-xs'
+                  ? 'border border-emerald-600 bg-emerald-50 text-emerald-800 shadow-xs font-bold'
                   : 'border border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900 hover:bg-white'
               }`}
             >
@@ -173,11 +174,39 @@ export default function MapRadarView({
         </div>
       </div>
 
+      {/* Mobile View Mode Switcher: Directory List vs Live Map */}
+      <div className="lg:hidden flex items-center p-1 rounded-xl bg-slate-200/80 border border-slate-300 shadow-xs">
+        <button
+          type="button"
+          onClick={() => setMobileViewMode('list')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
+            mobileViewMode === 'list'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Layers className="h-3.5 w-3.5 text-slate-700" />
+          <span>Specialists Directory ({filteredPros.length})</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileViewMode('map')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
+            mobileViewMode === 'map'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <MapPin className="h-3.5 w-3.5 text-emerald-600" />
+          <span>Interactive Map</span>
+        </button>
+      </div>
+
       {/* Main Content Area: Interactive Map (Left) & Professionals List (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        {/* Left Column: Interactive Street Map (5 Columns) */}
-        <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
+        {/* Left Column: Interactive Street Map (5 Columns on Desktop, toggled on Mobile) */}
+        <div className={`lg:col-span-5 space-y-4 lg:sticky lg:top-20 ${mobileViewMode === 'map' ? 'block' : 'hidden lg:block'}`}>
           
           <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
             
@@ -383,7 +412,7 @@ export default function MapRadarView({
         </div>
 
         {/* Right Column: Verified Professionals Directory (7 Columns) */}
-        <div className="lg:col-span-7 space-y-4">
+        <div className={`lg:col-span-7 space-y-4 ${mobileViewMode === 'list' ? 'block' : 'hidden lg:block'}`}>
           
           <div className="flex items-center justify-between text-xs text-slate-600 px-1 font-semibold">
             <span>
@@ -432,93 +461,115 @@ export default function MapRadarView({
                   key={pro.id}
                   onMouseEnter={() => setHoveredProId(pro.id)}
                   onMouseLeave={() => setHoveredProId(null)}
-                  className={`rounded-2xl border transition-all p-5 ${
+                  className={`rounded-2xl border transition-all p-4 sm:p-5 ${
                     isSelected || isHovered
                       ? 'border-emerald-600 bg-white shadow-md ring-1 ring-emerald-500/20'
                       : 'border-slate-200 bg-white hover:border-slate-300 shadow-xs'
                   }`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                    
-                    {/* Pro Identity & Credentials */}
-                    <div className="flex items-start gap-4">
-                      <div className="relative">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-base font-extrabold text-slate-800 border border-slate-200 shadow-xs">
-                          {pro.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                        {pro.availableNow && (
-                          <span 
-                            className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-600" 
-                            title="Available for immediate dispatch"
-                          />
-                        )}
+                  {/* Top Row: Avatar + Identity */}
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="relative shrink-0">
+                      <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-slate-100 text-sm sm:text-base font-extrabold text-slate-800 border border-slate-200 shadow-xs">
+                        {pro.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      {pro.availableNow && (
+                        <span 
+                          className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-600" 
+                          title="Available for immediate dispatch"
+                        />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0 space-y-0.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-extrabold text-sm sm:text-base text-slate-900 truncate">
+                          {pro.name}
+                        </h3>
+                        <span className="flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-800 shrink-0">
+                          <ShieldCheck className="h-3 w-3" />
+                          Verified Pro
+                        </span>
                       </div>
 
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="font-extrabold text-base text-slate-900">
-                            {pro.name}
-                          </h3>
-                          <span className="flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                            <ShieldCheck className="h-3 w-3" />
-                            Verified Pro
-                          </span>
-                        </div>
+                      <p className="text-xs font-semibold text-slate-700 truncate">
+                        {pro.title}
+                      </p>
 
-                        <p className="text-xs font-semibold text-slate-700">
-                          {pro.title}
-                        </p>
+                      <p className="text-[11px] text-slate-500 font-medium truncate">
+                        {pro.company}
+                      </p>
 
-                        <p className="text-[11px] text-slate-500 font-medium">
-                          {pro.company}
-                        </p>
-
-                        {/* Location & Reviews row */}
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs pt-1">
-                          <span className="flex items-center gap-1 text-emerald-800 font-bold">
-                            <MapPin className="h-3.5 w-3.5 text-emerald-600" />
-                            {pro.distanceMiles} mi away • {pro.neighborhood}
-                          </span>
-                          <span className="flex items-center gap-1 text-amber-600 font-bold">
-                            <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                            {pro.rating} ({pro.reviewsCount} reviews)
-                          </span>
-                          <span className="text-slate-500">
-                            ⚡ Responds in ~{pro.responseTime}
-                          </span>
-                        </div>
+                      {/* Location & Reviews row */}
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs pt-0.5">
+                        <span className="flex items-center gap-1 text-emerald-800 font-bold">
+                          <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-600" />
+                          {pro.distanceMiles} mi • {pro.neighborhood}
+                        </span>
+                        <span className="flex items-center gap-1 text-amber-600 font-bold">
+                          <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-amber-500 text-amber-500" />
+                          {pro.rating} ({pro.reviewsCount})
+                        </span>
+                        <span className="text-slate-500 text-[10px] sm:text-xs">
+                          ⚡ ~{pro.responseTime}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Rates & Booking Action */}
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between border-t border-slate-100 pt-3 sm:border-0 sm:pt-0">
-                      <div className="text-left sm:text-right">
-                        <div className="font-mono text-lg font-black text-slate-900">
-                          {formatPrice(pro.hourlyRateUSD, pro.hourlyRateNGN)}
-                          <span className="text-xs font-normal text-slate-500">/hr</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500">
-                          Diagnostic visit: <span className="font-bold text-slate-800">{formatPrice(pro.fixedRateUSD, pro.fixedRateNGN)}</span>
-                        </p>
+                    {/* Rate (top right, desktop) */}
+                    <div className="hidden sm:block text-right shrink-0">
+                      <div className="font-mono text-lg font-black text-slate-900">
+                        {formatPrice(pro.hourlyRateUSD, pro.hourlyRateNGN)}
+                        <span className="text-xs font-normal text-slate-500">/hr</span>
                       </div>
-
-                      <div className="flex items-center gap-2 mt-2 sm:mt-3">
-                        <button
-                          onClick={() => onViewProProfile(pro.id)}
-                          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100"
-                        >
-                          Profile
-                        </button>
-                        <button
-                          onClick={() => onSelectProForNegotiation(pro)}
-                          className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs active:scale-95 transition-all"
-                        >
-                          <span>Request Dispatch</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
+                      <p className="text-[11px] text-slate-500">
+                        Callout: <span className="font-bold text-slate-800">{formatPrice(pro.fixedRateUSD, pro.fixedRateNGN)}</span>
+                      </p>
                     </div>
+                  </div>
 
+                  {/* Mobile Rate Row */}
+                  <div className="sm:hidden mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+                    <div>
+                      <div className="font-mono text-base font-black text-slate-900">
+                        {formatPrice(pro.hourlyRateUSD, pro.hourlyRateNGN)}<span className="text-xs font-normal text-slate-500">/hr</span>
+                      </div>
+                      <p className="text-[10px] text-slate-500">
+                        Callout: <span className="font-bold text-slate-800">{formatPrice(pro.fixedRateUSD, pro.fixedRateNGN)}</span>
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => onViewProProfile(pro.id)}
+                        className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        Profile
+                      </button>
+                      <button
+                        onClick={() => onSelectProForNegotiation(pro)}
+                        className="flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white active:scale-95 transition-all"
+                      >
+                        <span>Dispatch</span>
+                        <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Desktop Action Buttons */}
+                  <div className="hidden sm:flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => onViewProProfile(pro.id)}
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100"
+                    >
+                      View Profile
+                    </button>
+                    <button
+                      onClick={() => onSelectProForNegotiation(pro)}
+                      className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs active:scale-95 transition-all"
+                    >
+                      <span>Request Dispatch</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
                   </div>
 
                   {/* Skills Pills */}

@@ -182,7 +182,7 @@ export default function App() {
       />
 
       {/* Main App Container */}
-      <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
         
         {/* VIEW 1: CLIENT DISCOVERY & DIRECTORY */}
         {activeView === 'discovery' && (
@@ -224,18 +224,18 @@ export default function App() {
         )}
 
         {/* Recent Jobs Strip */}
-        <section className="mt-12 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs text-xs">
+        <section className="mt-8 sm:mt-12 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs text-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              <span className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px] sm:text-[11px]">
                 Recently Completed Jobs Across Lagos
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-5 text-slate-600 text-[11px]">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-2 sm:gap-5 text-slate-600 text-[11px]">
               {MOCK_RECENT_DISPATCHES.map((disp) => (
-                <div key={disp.id} className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                <div key={disp.id} className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 shrink-0" />
                   <span className="text-slate-900 font-bold">{disp.title}</span>
                   <span className="text-slate-500">• {disp.location}</span>
                   <span className="text-slate-700 font-medium font-mono">{disp.amount}</span>
@@ -249,14 +249,14 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8 text-xs text-slate-600">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+      <footer className="border-t border-slate-200 bg-white py-6 sm:py-8 text-xs text-slate-600 mb-14 md:mb-0">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
             <span className="font-black text-slate-900 text-sm">Vanguard</span>
             <span>•</span>
             <span>Local Technical Services & Escrow Protection in Lagos, Nigeria</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-600">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-600">
             <span className="flex items-center gap-1 text-emerald-800 font-bold">
               <ShieldCheck className="h-4 w-4 text-emerald-600" />
               100% Satisfaction Guarantee

@@ -123,16 +123,16 @@ export default function DispatchSimulatorView({
     <div className="space-y-6">
       
       {/* Top Header & Simulation Controller */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
             <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-600 animate-ping"></span>
-            <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
+            <h2 className="text-sm sm:text-lg font-extrabold text-slate-900">
               Live Service Dispatch & Arrival Tracker
             </h2>
           </div>
           <p className="text-xs text-slate-600 mt-0.5">
-            Booking Ticket #VG-8921 • Assigned Technician: <span className="font-bold text-slate-900">{pro.name}</span> ({pro.title})
+            Ticket #VG-8921 • Assigned: <span className="font-bold text-slate-900">{pro.name}</span>
           </p>
         </div>
 
@@ -166,8 +166,8 @@ export default function DispatchSimulatorView({
       </div>
 
       {/* Realistic 4-Step Progress Track */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-5 shadow-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {steps.map((st) => {
             const isCompleted = currentStep > st.num;
             const isCurrent = currentStep === st.num;
@@ -179,7 +179,7 @@ export default function DispatchSimulatorView({
                   setCurrentStep(st.num);
                   setIsAutoPlaying(false);
                 }}
-                className={`flex flex-col text-left p-3.5 rounded-xl border transition-all ${
+                className={`flex flex-col text-left p-2.5 sm:p-3.5 rounded-xl border transition-all ${
                   isCurrent
                     ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-1 ring-emerald-500/30'
                     : isCompleted
@@ -203,8 +203,8 @@ export default function DispatchSimulatorView({
                   )}
                 </div>
 
-                <span className="text-xs font-bold text-slate-900 tracking-tight">{st.label}</span>
-                <span className="text-[11px] text-slate-500 font-medium mt-0.5">{st.subtitle}</span>
+                <span className="text-[11px] sm:text-xs font-bold text-slate-900 tracking-tight">{st.label}</span>
+                <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5">{st.subtitle}</span>
               </button>
             );
           })}
@@ -458,7 +458,7 @@ export default function DispatchSimulatorView({
         {/* Right Column: In-App Message Drawer (5 Cols) */}
         <div className="lg:col-span-5 space-y-4">
           
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col h-[480px] shadow-xs">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col h-[340px] sm:h-[420px] lg:h-[480px] shadow-xs">
             
             {/* Chat Header */}
             <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">

@@ -39,10 +39,10 @@ export default function ProProfileView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       
       {/* Top Navigation & Specialist Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3 sm:p-4 shadow-xs">
         <button
           onClick={onBackToRadar}
           className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors"
@@ -170,11 +170,11 @@ export default function ProProfileView({
         </div>
       </div>
 
-      {/* Tabs navigation */}
-      <div className="flex border-b border-slate-200 gap-8 text-xs font-bold">
+      {/* Tabs navigation - horizontal scroll on mobile */}
+      <div className="flex overflow-x-auto scrollbar-none border-b border-slate-200 gap-6 sm:gap-8 text-xs font-bold min-w-0">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`pb-3 transition-colors relative ${
+          className={`shrink-0 whitespace-nowrap pb-3 transition-colors relative ${
             activeTab === 'overview' ? 'text-emerald-800 border-b-2 border-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -182,7 +182,7 @@ export default function ProProfileView({
         </button>
         <button
           onClick={() => setActiveTab('portfolio')}
-          className={`pb-3 transition-colors relative ${
+          className={`shrink-0 whitespace-nowrap pb-3 transition-colors relative ${
             activeTab === 'portfolio' ? 'text-emerald-800 border-b-2 border-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -190,7 +190,7 @@ export default function ProProfileView({
         </button>
         <button
           onClick={() => setActiveTab('verification')}
-          className={`pb-3 transition-colors relative ${
+          className={`shrink-0 whitespace-nowrap pb-3 transition-colors relative ${
             activeTab === 'verification' ? 'text-emerald-800 border-b-2 border-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -198,11 +198,11 @@ export default function ProProfileView({
         </button>
         <button
           onClick={() => setActiveTab('reviews')}
-          className={`pb-3 transition-colors relative ${
+          className={`shrink-0 whitespace-nowrap pb-3 transition-colors relative ${
             activeTab === 'reviews' ? 'text-emerald-800 border-b-2 border-emerald-600 font-extrabold' : 'text-slate-500 hover:text-slate-900'
           }`}
         >
-          Customer Reviews ({activePro.recentReviews.length})
+          Reviews ({activePro.recentReviews.length})
         </button>
       </div>
 
