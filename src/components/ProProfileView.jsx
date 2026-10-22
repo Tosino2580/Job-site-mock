@@ -77,8 +77,22 @@ export default function ProProfileView({
           
           {/* Main Identity Info */}
           <div className="flex items-start gap-5">
-            <div className="relative">
-              <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-2xl bg-slate-100 text-2xl font-black text-slate-900 border border-slate-200 shadow-xs">
+            <div className="relative shrink-0">
+              {activePro.photo ? (
+                <img
+                  src={activePro.photo}
+                  alt={activePro.name}
+                  className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover border border-slate-200 shadow-sm"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div 
+                className={`h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-2xl bg-slate-100 text-2xl font-black text-slate-900 border border-slate-200 shadow-xs ${activePro.photo ? 'hidden' : 'flex'}`}
+              >
                 {activePro.name.split(' ').map(n => n[0]).join('')}
               </div>
               <span 

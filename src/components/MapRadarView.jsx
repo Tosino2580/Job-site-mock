@@ -382,8 +382,14 @@ export default function MapRadarView({
               </div>
 
               <div className="mt-3 flex items-start gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-bold text-slate-800 border border-slate-200">
-                  {activePro.name.split(' ').map(n => n[0]).join('')}
+                <div className="relative shrink-0">
+                  {activePro.photo ? (
+                    <img src={activePro.photo} alt={activePro.name} className="h-11 w-11 rounded-xl object-cover border border-slate-200 shadow-xs" />
+                  ) : (
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-sm font-bold text-slate-800 border border-slate-200">
+                      {activePro.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="font-bold text-slate-900 truncate text-sm">{activePro.name}</h4>
@@ -470,12 +476,24 @@ export default function MapRadarView({
                   {/* Top Row: Avatar + Identity */}
                   <div className="flex items-start gap-3 sm:gap-4">
                     <div className="relative shrink-0">
-                      <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-slate-100 text-sm sm:text-base font-extrabold text-slate-800 border border-slate-200 shadow-xs">
+                      <img
+                        src={pro.photo}
+                        alt={pro.name}
+                        className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl object-cover border border-slate-200 shadow-xs"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div
+                        style={{ display: 'none' }}
+                        className="h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-slate-100 text-sm sm:text-base font-extrabold text-slate-800 border border-slate-200 shadow-xs"
+                      >
                         {pro.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       {pro.availableNow && (
-                        <span 
-                          className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-600" 
+                        <span
+                          className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-emerald-600"
                           title="Available for immediate dispatch"
                         />
                       )}

@@ -225,8 +225,14 @@ export default function PostJobModal({
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-slate-200 font-bold text-slate-900 text-xs shadow-xs">
-                    {topMatch.name.split(' ').map(n => n[0]).join('')}
+                  <div className="relative shrink-0">
+                    {topMatch.photo ? (
+                      <img src={topMatch.photo} alt={topMatch.name} className="h-9 w-9 rounded-xl object-cover border border-slate-200 shadow-xs" />
+                    ) : (
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-slate-200 font-bold text-slate-900 text-xs shadow-xs">
+                        {topMatch.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <h5 className="font-bold text-slate-900">{topMatch.name}</h5>

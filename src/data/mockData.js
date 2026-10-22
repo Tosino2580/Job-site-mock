@@ -20,6 +20,7 @@ export const LOCATIONS = [
 export const PROFESSIONALS = [
   {
     id: 'pro-1',
+    photo: '/images/pro1.jpg',
     name: 'Engr. Babatunde Alabi',
     title: 'Senior Master Electrician & Power Specialist',
     company: 'Alabi Electrical & Engineering Services Ltd',
@@ -95,6 +96,7 @@ export const PROFESSIONALS = [
   },
   {
     id: 'pro-2',
+    photo: '/images/pro2.jpg',
     name: 'Amina Bello',
     title: 'Lead Solar & Inverter Systems Engineer',
     company: 'Helios Solar & Power Solutions',
@@ -163,6 +165,7 @@ export const PROFESSIONALS = [
   },
   {
     id: 'pro-3',
+    photo: '/images/pro3.jpg',
     name: 'Tariq Adeleke',
     title: 'HVAC & Central Air Conditioning Specialist',
     company: 'CoolMaster Climate Engineering',
@@ -224,6 +227,7 @@ export const PROFESSIONALS = [
   },
   {
     id: 'pro-4',
+    photo: '/images/pro4.jpg',
     name: 'Kelechi Eze',
     title: 'Smart Home Automation & IoT Technician',
     company: 'Optima Smart Living Systems',
@@ -285,6 +289,7 @@ export const PROFESSIONALS = [
   },
   {
     id: 'pro-5',
+    photo: '/images/pro5.jpg',
     name: 'Zainab Yusuf',
     title: 'Fiber Optic & Office Network Engineer',
     company: 'Apex Fiber Networks Ltd',
@@ -346,6 +351,7 @@ export const PROFESSIONALS = [
   },
   {
     id: 'pro-6',
+    photo: '/images/pro1.jpg',
     name: 'Chinedu Okonkwo',
     title: 'CCTV Security & Access Control Specialist',
     company: 'ShieldPoint Security Solutions',

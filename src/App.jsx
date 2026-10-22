@@ -1,48 +1,71 @@
 import React, { useState } from 'react';
+import LandingPage from './components/LandingPage';
+import AuthPage from './components/AuthPage';
 import Navbar from './components/Navbar';
 import MapRadarView from './components/MapRadarView';
 import ProProfileView from './components/ProProfileView';
 import DispatchSimulatorView from './components/DispatchSimulatorView';
 import PostJobModal from './components/PostJobModal';
 import NegotiateModal from './components/NegotiateModal';
-import AuthModal from './components/AuthModal';
 import ProDashboardModal from './components/ProDashboardModal';
 import Toast from './components/Toast';
 import { PROFESSIONALS, MOCK_RECENT_DISPATCHES } from './data/mockData';
-import { ShieldCheck, MapPin, Truck, Activity, Clock, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  const [activeView, setActiveView] = useState('discovery'); // 'discovery', 'profile', 'simulator'
+  // ─── App Flow State ─────────────────────────────────────────────────────────
+  // Starts on 'auth' (Sign In / Register) as requested
+  // User can also visit 'landing' or go straight to 'app' (dashboard)
+  const [appScreen, setAppScreen] = useState('auth');
+  const [authConfig, setAuthConfig] = useState({ mode: 'signin', role: 'client' });
+
+  // ─── Dashboard State ─────────────────────────────────────────────────────────
+  const [activeView, setActiveView] = useState('discovery');
   const [professionalsList, setProfessionalsList] = useState(PROFESSIONALS);
   const [selectedProId, setSelectedProId] = useState(PROFESSIONALS[0].id);
   const [proForNegotiation, setProForNegotiation] = useState(null);
   const [isNegotiateModalOpen, setIsNegotiateModalOpen] = useState(false);
   const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
-  
-  // Auth & Professional Portal states
   const [currentUser, setCurrentUser] = useState(null);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState('signin'); // 'signin' or 'register'
   const [isProDashboardOpen, setIsProDashboardOpen] = useState(false);
-
-  const [currency, setCurrency] = useState('NGN'); // 'NGN' | 'USD'
+  const [currency, setCurrency] = useState('NGN');
   const [toast, setToast] = useState(null);
   const [activeDispatchesCount, setActiveDispatchesCount] = useState(1);
 
   const availableProsCount = professionalsList.filter(p => p.availableNow).length;
 
-  const showToast = (title, message) => {
-    setToast({ title, message });
+  // ─── Toast Helper ─────────────────────────────────────────────────────────
+  const showToast = (title, message) => setToast({ title, message });
+
+  // ─── Landing Page Handlers ────────────────────────────────────────────────
+  const handleGetStarted = (role = 'client') => {
+    setAuthConfig({ mode: 'register', role });
+    setAppScreen('auth');
   };
 
-  // Toggle availability handler
+  const handleSignIn = () => {
+    setAuthConfig({ mode: 'signin', role: 'client' });
+    setAppScreen('auth');
+  };
+
+  // ─── Auth Handlers ────────────────────────────────────────────────────────
+  const handleAuthSuccess = (userData) => {
+    setCurrentUser(userData);
+    setAppScreen('app');
+    showToast(
+      userData.role === 'pro' ? 'Welcome, Professional!' : 'Welcome to Vanguard!',
+      `Signed in as ${userData.name}. ${userData.role === 'pro' ? 'Your specialist dashboard is ready.' : 'Browse verified specialists near you.'}`
+    );
+  };
+
+  // ─── Dashboard Handlers ────────────────────────────────────────────────────
   const handleToggleAvailability = (proId) => {
     setProfessionalsList(prev => prev.map(p => {
       if (p.id === proId) {
         const nextState = !p.availableNow;
         showToast(
-          nextState ? 'Status: Available for Jobs' : 'Status: Booked / Offline',
-          `${p.name}'s status updated on the directory map.`
+          nextState ? 'Status: Available' : 'Status: Offline',
+          `${p.name}'s availability updated on the directory.`
         );
         return { ...p, availableNow: nextState };
       }
@@ -50,95 +73,31 @@ export default function App() {
     }));
   };
 
-  // Open Auth modal in specific mode
+  // Called from Navbar when "Sign In" is clicked while already in the app
   const handleOpenAuth = (mode = 'signin') => {
-    setAuthModalMode(mode);
-    setIsAuthModalOpen(true);
+    setAuthConfig({ mode, role: 'client' });
+    setAppScreen('auth');
   };
 
-  // Handle successful login
-  const handleLoginSuccess = (userData) => {
-    setCurrentUser(userData);
-    setIsAuthModalOpen(false);
-    showToast(
-      'Signed In Successfully',
-      `Welcome, ${userData.name}. Logged in as a ${userData.role === 'pro' ? 'Verified Specialist' : 'Client'}.`
-    );
-    if (userData.proProfileId) {
-      setSelectedProId(userData.proProfileId);
-    }
-  };
-
-  // Handle successful client registration
-  const handleRegisterClientSuccess = (clientData) => {
-    setCurrentUser({
-      name: clientData.name,
-      email: clientData.email,
-      phone: clientData.phone,
-      neighborhood: clientData.neighborhood,
-      role: 'client',
-      proProfileId: null
-    });
-    setIsAuthModalOpen(false);
-    showToast(
-      '🎉 Account Created!',
-      `Welcome to Vanguard, ${clientData.name}. You can now book specialists and post jobs.`
-    );
-  };
-
-  // Handle successful registration of professional & skill publication
-  const handleRegisterProSuccess = (newPro) => {
-    setProfessionalsList(prev => [newPro, ...prev]);
-    setCurrentUser({
-      name: newPro.name,
-      email: `${newPro.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@vanguard.ng`,
-      role: 'pro',
-      proProfileId: newPro.id
-    });
-    setSelectedProId(newPro.id);
-    setIsAuthModalOpen(false);
-    
-    showToast(
-      '🎉 Profile Published!',
-      `${newPro.name} is now listed and visible on the Lagos directory map.`
-    );
-    setActiveView('profile');
-  };
-
-  // Update existing professional from Pro Dashboard
-  const handleUpdateProProfile = (updatedPro) => {
-    setProfessionalsList(prev => prev.map(p => p.id === updatedPro.id ? updatedPro : p));
-    showToast(
-      'Rates & Details Updated',
-      'Your profile changes have been saved.'
-    );
-  };
-
-  // Sign out handler
   const handleSignOut = () => {
     setCurrentUser(null);
-    showToast('Signed Out', 'You have been logged out.');
+    setAppScreen('landing');
+    showToast('Signed Out', 'You have been signed out of your account.');
   };
 
-  // Select pro for negotiation modal
   const handleSelectProForNegotiation = (pro) => {
     setProForNegotiation(pro);
     setIsNegotiateModalOpen(true);
   };
 
-  // View specific pro in profile view
   const handleViewProProfile = (proId) => {
     setSelectedProId(proId);
     setActiveView('profile');
   };
 
-  // Submit job from Post Job modal
   const handleSubmitJob = (jobData) => {
     setIsPostJobModalOpen(false);
-    showToast(
-      'Service Request Received',
-      `Your request has been matched with a verified technician in ${jobData.locationZone}.`
-    );
+    showToast('Service Request Received', `Your request has been matched with a verified technician in ${jobData.locationZone}.`);
     if (jobData.matchedPro) {
       setProForNegotiation(jobData.matchedPro);
       setSelectedProId(jobData.matchedPro.id);
@@ -146,27 +105,57 @@ export default function App() {
     }
   };
 
-  // Confirm dispatch from Negotiate modal -> switches to Dispatch Tracker
   const handleConfirmDispatch = (contractData) => {
     setIsNegotiateModalOpen(false);
     setSelectedProId(contractData.pro.id);
     setActiveDispatchesCount(prev => prev + 1);
-    showToast(
-      'Booking Confirmed & Dispatched',
-      `Escrow payment authorized. Technician is now en route.`
-    );
+    showToast('Booking Confirmed & Dispatched', 'Escrow payment authorized. Technician is now en route.');
     setActiveView('simulator');
   };
 
-  // Active pro profile for dashboard
-  const userProProfile = currentUser?.proProfileId 
+  const handleUpdateProProfile = (updatedPro) => {
+    setProfessionalsList(prev => prev.map(p => p.id === updatedPro.id ? updatedPro : p));
+    showToast('Profile Updated', 'Your profile changes have been saved.');
+  };
+
+  const userProProfile = currentUser?.proProfileId
     ? professionalsList.find(p => p.id === currentUser.proProfileId)
     : professionalsList[0];
 
+  // ─── SCREEN: LANDING ───────────────────────────────────────────────────────
+  if (appScreen === 'landing') {
+    return (
+      <>
+        <LandingPage
+          onGetStarted={handleGetStarted}
+          onSignIn={handleSignIn}
+          onExploreDirectory={() => setAppScreen('app')}
+        />
+        <Toast toast={toast} onClose={() => setToast(null)} />
+      </>
+    );
+  }
+
+  // ─── SCREEN: AUTH ──────────────────────────────────────────────────────────
+  if (appScreen === 'auth') {
+    return (
+      <>
+        <AuthPage
+          defaultMode={authConfig.mode}
+          defaultRole={authConfig.role}
+          onAuthSuccess={handleAuthSuccess}
+          onBack={() => setAppScreen('landing')}
+          onExploreGuest={() => setAppScreen('app')}
+        />
+        <Toast toast={toast} onClose={() => setToast(null)} />
+      </>
+    );
+  }
+
+  // ─── SCREEN: MAIN APP DASHBOARD ────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans">
-      
-      {/* Top Navigation */}
+
       <Navbar
         activeView={activeView}
         setActiveView={setActiveView}
@@ -179,12 +168,11 @@ export default function App() {
         onOpenAuth={handleOpenAuth}
         onOpenProDashboard={() => setIsProDashboardOpen(true)}
         onSignOut={handleSignOut}
+        onGoHome={() => setAppScreen('landing')}
       />
 
-      {/* Main App Container */}
       <main className="flex-1 mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
-        
-        {/* VIEW 1: CLIENT DISCOVERY & DIRECTORY */}
+
         {activeView === 'discovery' && (
           <MapRadarView
             professionals={professionalsList}
@@ -195,7 +183,6 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 2: PROFESSIONAL / WORKER PROFILE & VERIFICATION VIEW */}
         {activeView === 'profile' && (
           <ProProfileView
             professionals={professionalsList}
@@ -208,18 +195,13 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 3: DISPATCH TRACKER */}
         {activeView === 'simulator' && (
           <DispatchSimulatorView
             professionals={professionalsList}
             selectedPro={professionalsList.find(p => p.id === selectedProId)}
             currency={currency}
-            onResetSimulation={() => {
-              showToast('Tracker Reset', 'Returned to service request step.');
-            }}
-            onFinishContract={() => {
-              showToast('Job Completed', 'Escrow released and rating submitted.');
-            }}
+            onResetSimulation={() => showToast('Tracker Reset', 'Returned to service request step.')}
+            onFinishContract={() => showToast('Job Completed', 'Escrow released and rating submitted.')}
           />
         )}
 
@@ -245,14 +227,12 @@ export default function App() {
             </div>
           </div>
         </section>
-
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-6 sm:py-8 text-xs text-slate-600 mb-14 md:mb-0">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
-            <span className="font-black text-slate-900 text-sm">Vanguard</span>
+            <button onClick={() => setAppScreen('landing')} className="font-black text-slate-900 text-sm hover:text-emerald-700 transition-colors">Vanguard</button>
             <span>•</span>
             <span>Local Technical Services & Escrow Protection in Lagos, Nigeria</span>
           </div>
@@ -266,7 +246,6 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Post Job Modal (Client) */}
       <PostJobModal
         isOpen={isPostJobModalOpen}
         onClose={() => setIsPostJobModalOpen(false)}
@@ -275,7 +254,6 @@ export default function App() {
         onSubmitJob={handleSubmitJob}
       />
 
-      {/* Negotiate / Dispatch Modal */}
       <NegotiateModal
         isOpen={isNegotiateModalOpen}
         onClose={() => setIsNegotiateModalOpen(false)}
@@ -284,18 +262,6 @@ export default function App() {
         onConfirmDispatch={handleConfirmDispatch}
       />
 
-      {/* Auth Modal (Sign In / Register Client / Join as Pro) */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        initialMode={authModalMode}
-        currency={currency}
-        onLoginSuccess={handleLoginSuccess}
-        onRegisterClientSuccess={handleRegisterClientSuccess}
-        onRegisterProSuccess={handleRegisterProSuccess}
-      />
-
-      {/* Pro Skills & Rates Dashboard Modal */}
       <ProDashboardModal
         isOpen={isProDashboardOpen}
         onClose={() => setIsProDashboardOpen(false)}
@@ -306,9 +272,7 @@ export default function App() {
         onToggleAvailability={handleToggleAvailability}
       />
 
-      {/* Interactive Toast Notifications */}
       <Toast toast={toast} onClose={() => setToast(null)} />
-
     </div>
   );
 }

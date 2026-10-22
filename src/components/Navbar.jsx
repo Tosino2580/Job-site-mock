@@ -25,7 +25,8 @@ export default function Navbar({
   currentUser,
   onOpenAuth,
   onOpenProDashboard,
-  onSignOut
+  onSignOut,
+  onGoHome
 }) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
@@ -34,8 +35,9 @@ export default function Navbar({
         {/* Brand & Location */}
         <div className="flex items-center gap-4 sm:gap-6">
           <div 
-            onClick={() => setActiveView('discovery')}
+            onClick={onGoHome || (() => setActiveView('discovery'))}
             className="flex cursor-pointer items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-90"
+            title="Return to Vanguard Home"
           >
             <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs font-bold shrink-0">
               <Wrench className="h-4 w-4" />
@@ -167,10 +169,14 @@ export default function Navbar({
                 }`}
                 title={currentUser.role === 'pro' ? 'Click to manage your rates and skills' : 'Logged in'}
               >
-                <div className="relative">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-white font-bold text-[10px]">
-                    {currentUser.name.split(' ').map(n => n[0]).join('')}
-                  </div>
+                <div className="relative shrink-0">
+                  {currentUser.avatar ? (
+                    <img src={currentUser.avatar} alt={currentUser.name} className="h-6 w-6 rounded-full object-cover border border-slate-200" />
+                  ) : (
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-white font-bold text-[10px]">
+                      {currentUser.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  )}
                   <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-600 border border-white" />
                 </div>
                 

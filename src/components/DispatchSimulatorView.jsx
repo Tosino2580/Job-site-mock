@@ -267,8 +267,14 @@ export default function DispatchSimulatorView({
               </div>
 
               <div className="flex items-start gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white border border-slate-200 text-lg font-black text-slate-900 shadow-xs">
-                  {pro.name.split(' ').map(n => n[0]).join('')}
+                <div className="relative shrink-0">
+                  {pro.photo ? (
+                    <img src={pro.photo} alt={pro.name} className="h-14 w-14 rounded-2xl object-cover border border-slate-200 shadow-xs" />
+                  ) : (
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white border border-slate-200 text-lg font-black text-slate-900 shadow-xs">
+                      {pro.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h4 className="text-base font-bold text-slate-900">{pro.name}</h4>
@@ -381,8 +387,14 @@ export default function DispatchSimulatorView({
               {/* Technician Contact Card */}
               <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 font-extrabold text-slate-800 border border-slate-200">
-                    {pro.name.split(' ').map(n => n[0]).join('')}
+                  <div className="relative shrink-0">
+                    {pro.photo ? (
+                      <img src={pro.photo} alt={pro.name} className="h-12 w-12 rounded-2xl object-cover border border-slate-200" />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 font-extrabold text-slate-800 border border-slate-200">
+                        {pro.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 text-sm">{pro.name}</h4>
@@ -463,8 +475,14 @@ export default function DispatchSimulatorView({
             {/* Chat Header */}
             <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 border border-slate-200 font-bold text-slate-900 text-xs">
-                  {pro.name.split(' ').map(n => n[0]).join('')}
+                <div className="relative shrink-0">
+                  {pro.photo ? (
+                    <img src={pro.photo} alt={pro.name} className="h-9 w-9 rounded-xl object-cover border border-slate-200" />
+                  ) : (
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 border border-slate-200 font-bold text-slate-900 text-xs">
+                      {pro.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-900">{pro.name}</h4>

@@ -84,8 +84,14 @@ export default function NegotiateModal({
           
           {/* Pro Snapshot */}
           <div className="flex items-center gap-3.5 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white border border-slate-200 font-bold text-slate-900 text-sm shadow-xs">
-              {pro.name.split(' ').map(n => n[0]).join('')}
+            <div className="relative shrink-0">
+              {pro.photo ? (
+                <img src={pro.photo} alt={pro.name} className="h-12 w-12 rounded-2xl object-cover border border-slate-200 shadow-xs" />
+              ) : (
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white border border-slate-200 font-bold text-slate-900 text-sm shadow-xs">
+                  {pro.name.split(' ').map(n => n[0]).join('')}
+                </div>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
